@@ -32,16 +32,26 @@ describe("GET /api/users", () => {
 //get user by id
 describe("GET /api/users/:id", () => {
   it("should return user by id", async () => {
-    const response = await request(app).get("/api/users/1");
+    const newUser = {
+      name: "User Untuk Get By ID",
+      email: `getbyid-${Date.now()}@example.com`,
+      age: 25,
+    };
+
+    const postResponse = await request(app).post("/api/users").send(newUser);
+
+    const userId = postResponse.body.userId;
+
+    const response = await request(app).get(`/api/users/${userId}`);
 
     expect(response.statusCode).toBe(200);
     expect(response.body.success).toBe(true);
     expect(response.body.data).toEqual(
       expect.objectContaining({
-        id: 1,
-        name: expect.any(String),
-        email: expect.any(String),
-        age: expect.any(Number),
+        id: userId,
+        name: newUser.name,
+        email: newUser.email,
+        age: newUser.age,
       }),
     );
   });
